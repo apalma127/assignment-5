@@ -36,7 +36,7 @@ data("lending_club")
 Github Repo Link: https://github.com/apalma127/assignment-5
 
 
-## Interpretable ML methods
+## Interpretable ML methods -- ____
 
 We will once again use the lending club data that we used in the 3rd assignment. We will focus on the random forest model, which I recreate below. (Note we use this model even though the true negative rate of the training set is quite bad.)
 
@@ -182,7 +182,7 @@ If you need help with function writing check out the [Functions](https://r4ds.ha
 
 7. (WARNING: I may have to make some changes to how you save this. I will do that by Friday at the latest.) Save this final model using the `saveRDS()` function - see the [Use the model](https://advanced-ds-in-r.netlify.app/posts/2021-03-16-ml-review/#use-the-model) section of the `tidymodels` intro. We are going to use the model in the next part. You'll want to save it in the folder where you create your shiny app.
 
-## Shiny app
+## Shiny app -- ____
 
 (WARNING: I may make some small changes to this as well which I will also update by Friday.)
 
@@ -190,7 +190,9 @@ You are going to create an app that allows a user to explore how the predicted p
 
 Specifically, you will do the following:
 
-* Set up a separate project and GitHub repo for this app. Make sure the saved model from the previous problem is also in that folder. The app needs to be created in a file called *exactly* app.R that is also in the project folder.   
+* Set up a separate project and GitHub repo for this app. Make sure the saved model from the previous problem is also in that folder. The app needs to be created in a file called *exactly* app.R that is also in the project folder. 
+
+
 * At the top of the file, load any libraries you use in the app.  
 * Use the `readRDS()` function to load the model.  
 * You may want to load some of the data to use
@@ -201,15 +203,24 @@ Specifically, you will do the following:
 * Publish your app to [shinyapps.io](https://www.shinyapps.io/). There are instructions for doing that on the tutorial I linked to above.   
 * Write a paragraph or two describing your app on your website! Link to the app and your GitHub repository in your post. Include a link to your post here. 
 
-## Data Ethics: Data visualization principles
-
-I'm hoping that the topic for this week is a review for all of you, but it's good to remind ourselves of these principles.  
-
-**Task:**
-
-Read both short articles in Week6. Data visualization section of [Calling Bulllshit](https://www.callingbullshit.org/syllabus.html#Visual). Were there any principles mentioned that you hadn't heard of before? What graph stood out for you as "the worst"? Did any of the graphs fool you? Or were able to overcome the bad practices (don't worry if they fool you - plently of them have fooled me, too.)? How does practicing good data visualization principles fit in with data ethics?
 
 
-## Make this document look nicer!
+## Data Ethics: Data visualization principles -- _____
 
-Go to the top and delete the `#` from the options section and knit a final time.
+Were there any principles mentioned that you hadn't heard of before? 
+
+**I was unaware that the y axis on line graphs shouldn't include 0 and that the graoh should be much more honed in on the region of interest than zoomed out.  I actually have never done this to be honest just because I thought it was good etiquette to always start at 0...**
+
+What graph stood out for you as "the worst"? 
+
+**The worst has to be the bubble chart with the professor in front.  While it does have a lot of data and cool things going on, it is a mess.  With no axes and random size differences, there is so much going on the only thing you can see is relative difference.  Additionally, there is a lot of blobbing of points on top of eachother making even relative difference difficult to see.**
+
+Did any of the graphs fool you? 
+
+**The gun deaths in FL graph was veryyyyy confusing because of the upside down filling of it.  At first I was like wow super weird stand your ground DECREASED gun deaths but that was simply because the creator of the graph wanted you to see quite the opposite of reality.**
+
+
+How does practicing good data visualization principles fit in with data ethics?
+
+**The florida gun deaths one was a really good example of how bad data practices, no matter the intent, can actually manipulate the truth and lie to the viewer.  Such fake news would be damaging to a narrative in an election especially because of how contrary to reality it is.  If someone were to do this during election time with important stats about abortion and immigration, it would be crucial to changing minds and votes.**
+
