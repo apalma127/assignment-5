@@ -276,7 +276,47 @@ For an extra challenge, write a function that will work for either a quantitativ
 
 If you need help with function writing check out the [Functions](https://r4ds.had.co.nz/functions.html) chapter of R4DS by Wickham and Grolemund.
 
-4. Use `DALEX` functions to create partial dependence plots (with the CP profiles in gray) for the 3-4 most important variables. If the important variables are categorical, you can instead make a CP profile for 3 observations in the dataset and discuss how you could go about constructing a partial dependence plot for a categorical variable (you don't have to code it, but you can if you want an extra challenge). If it ever gives you an error that says, "Error: Can't convert from `VARIABLE` <double> to `VARIABLE` <integer> due to loss of precision", then remove that variable from the list. I seem to have figured out why it's doing that, but I don't know how to fix it yet.
+
+
+4. Use `DALEX` functions to create partial dependence plots (with the CP profiles in gray) for the 3-4 most important variables. 
+
+
+If the important variables are categorical, you can instead make a CP profile for 3 observations in the dataset and discuss how you could go about constructing a partial dependence plot for a categorical variable (you don't have to code it, but you can if you want an extra challenge).
+
+Most Important:  **interest rate**, **sub_grade**, **open_il_24m**, and **annual income**
+
+```{r}
+is.factor(lending_training$int_rate)
+```
+```{r}
+is.factor(lending_training$sub_grade)
+
+```
+
+```{r}
+is.factor(lending_training$open_il_24m)
+
+```
+
+```{r}
+is.factor(lending_training$annual_inc)
+
+```
+
+
+
+```{r}
+set.seed(2) 
+
+rf_pdp <- model_profile(explainer = rf_explain, 
+                        variables = c("int_rate", "open_il_24m", "annual_inc"))
+
+plot(rf_pdp, 
+     variables = c("int_rate", "open_il_24m", "annual_inc"),
+     geom = "profiles")
+```
+
+
 
 5. Choose 3 observations and do the following for each observation:  
   - Construct a break-down plot using the default ordering. Interpret the resulting graph. Which variables contribute most to each observation's prediction?  
