@@ -319,9 +319,22 @@ plot(rf_pdp,
 
 
 5. Choose 3 observations and do the following for each observation:  
+
+
   - Construct a break-down plot using the default ordering. Interpret the resulting graph. Which variables contribute most to each observation's prediction?  
+  
+  
   - Construct a SHAP graph and interpret it. Does it tell a similar story to the break-down plot?  
+  
+  
   - Construct a LIME graph (follow my code carefully). How close is each original prediction to the prediction from the local model? Interpret the result. You can also try using fewer or more variables in the local model than I used in the example.  
+  
+  
+  
+  
+  
+  
+  
   
 6. Describe how you would use the interpretable machine learning tools we've learned (both local and global) in future machine learning projects? How does each of them help you?
 
