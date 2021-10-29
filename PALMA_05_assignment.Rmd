@@ -21,6 +21,7 @@ library(lubridate)         # for date manipulation
 library(themis)            # for up and downsampling
 library(DALEX)             # for model interpretation  
 library(DALEXtra)          # for extension of DALEX
+library(lime)
 theme_set(theme_minimal()) # Lisa's favorite theme
 ```
 
@@ -356,15 +357,258 @@ plot(rf_pdp,
 5. Choose 3 observations and do the following for each observation:  
 
 
-  - Construct a break-down plot using the default ordering. Interpret the resulting graph. Which variables contribute most to each observation's prediction?  
+**OBSERVATION 2**
+
+```{r}
+obs2 <- lending_training %>% 
+  slice(2)
+obs2
+```
+
+
+  - Construct a break-down plot using the default ordering. 
+  
+```{r}
+pp_rf_2 <- predict_parts(explainer = rf_explain,
+                          new_observation = obs2,
+                          type = "break_down") 
+
+plot(pp_rf_2)
+```
+  
+**Interpret the resulting graph. Which variables contribute most to each observation's prediction?**
+
+
+
+
+
+
+
   
   
-  - Construct a SHAP graph and interpret it. Does it tell a similar story to the break-down plot?  
+  - Construct a SHAP graph and interpret it. 
+  
+```{r}
+rf_shap_2 <-predict_parts(explainer = rf_explain,
+                        new_observation = obs2,
+                        type = "shap",
+                        B = 10 
+)
+
+plot(rf_shap_2)
+```
+
   
   
-  - Construct a LIME graph (follow my code carefully). How close is each original prediction to the prediction from the local model? Interpret the result. You can also try using fewer or more variables in the local model than I used in the example.  
+  
+**Does it tell a similar story to the break-down plot?**
+
+
+
+
   
   
+  
+  - Construct a LIME graph (follow my code carefully). 
+  
+  
+```{r}
+model_type.dalex_explainer <- DALEXtra::model_type.dalex_explainer
+predict_model.dalex_explainer <- DALEXtra::predict_model.dalex_explainer
+
+lime_rf_2 <- predict_surrogate(explainer = rf_explain,
+                             new_observation = obs2 %>%
+                               select(-Class), 
+                             n_features = 5,
+                             n_permutations = 1000,
+                             type = "lime")
+
+lime_rf_2 %>% 
+  select(model_r2, model_prediction, prediction) %>% 
+  distinct()
+```
+
+  
+```{r}
+plot(lime_rf_2) +
+  labs(x = "Variable")
+```
+
+  
+  
+**How close is each original prediction to the prediction from the local model? Interpret the result. You can also try using fewer or more variables in the local model than I used in the example.**
+  
+  
+  
+  
+  
+  
+  
+**OBSERVATION 20**
+
+```{r}
+obs20 <- lending_training %>% 
+  slice(20)
+obs20
+```
+
+- Construct a break-down plot using the default ordering. 
+  
+```{r}
+pp_rf_20 <- predict_parts(explainer = rf_explain,
+                          new_observation = obs20,
+                          type = "break_down") 
+
+plot(pp_rf_20)
+```
+
+
+**Interpret the resulting graph. Which variables contribute most to each observation's prediction?**
+
+
+
+
+
+
+  
+  
+  - Construct a SHAP graph and interpret it. 
+  
+```{r}
+rf_shap_20 <-predict_parts(explainer = rf_explain,
+                        new_observation = obs20,
+                        type = "shap",
+                        B = 10 
+)
+
+plot(rf_shap_20)
+```
+  
+  
+  
+  **Does it tell a similar story to the break-down plot?**
+
+
+
+
+  
+  
+  
+  
+  - Construct a LIME graph (follow my code carefully). 
+  
+
+```{r}
+model_type.dalex_explainer <- DALEXtra::model_type.dalex_explainer
+predict_model.dalex_explainer <- DALEXtra::predict_model.dalex_explainer
+
+lime_rf_20 <- predict_surrogate(explainer = rf_explain,
+                             new_observation = obs20 %>%
+                               select(-Class), 
+                             n_features = 5,
+                             n_permutations = 1000,
+                             type = "lime")
+
+lime_rf_20 %>% 
+  select(model_r2, model_prediction, prediction) %>% 
+  distinct()
+```
+
+  
+```{r}
+plot(lime_rf_20) +
+  labs(x = "Variable")
+```
+  
+  
+  
+**How close is each original prediction to the prediction from the local model? Interpret the result. You can also try using fewer or more variables in the local model than I used in the example.**
+  
+  
+  
+  
+  
+  
+
+
+**OBSERVATION 200**
+
+```{r}
+obs200 <- lending_training %>% 
+  slice(200)
+obs200
+```
+
+- Construct a break-down plot using the default ordering. 
+  
+```{r}
+pp_rf_200 <- predict_parts(explainer = rf_explain,
+                          new_observation = obs200,
+                          type = "break_down") 
+
+plot(pp_rf_200)
+```
+  
+  
+**Interpret the resulting graph. Which variables contribute most to each observation's prediction?**
+
+
+
+
+
+  
+  
+  - Construct a SHAP graph and interpret it. 
+  
+```{r}
+rf_shap_200 <-predict_parts(explainer = rf_explain,
+                        new_observation = obs200,
+                        type = "shap",
+                        B = 10 
+)
+
+plot(rf_shap_200)
+```
+  
+  
+  
+  **Does it tell a similar story to the break-down plot?**
+
+
+
+
+  
+  
+  
+  
+  - Construct a LIME graph (follow my code carefully). 
+  
+
+```{r}
+model_type.dalex_explainer <- DALEXtra::model_type.dalex_explainer
+predict_model.dalex_explainer <- DALEXtra::predict_model.dalex_explainer
+
+lime_rf_200 <- predict_surrogate(explainer = rf_explain,
+                             new_observation = obs200 %>%
+                               select(-Class), 
+                             n_features = 5,
+                             n_permutations = 1000,
+                             type = "lime")
+
+lime_rf_200 %>% 
+  select(model_r2, model_prediction, prediction) %>% 
+  distinct()
+```
+
+  
+```{r}
+plot(lime_rf_200) +
+  labs(x = "Variable")
+```
+  
+  
+  
+  **How close is each original prediction to the prediction from the local model? Interpret the result. You can also try using fewer or more variables in the local model than I used in the example.**
   
   
   
