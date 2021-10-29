@@ -118,9 +118,17 @@ rf_final <- rf_workflow %>%
 1. Use functions from the `DALEX` and `DALEXtra` libraries to create a histogram and boxplot of the residuals from the training data. 
 
 ```{r}
-lending_training <- lending_training %>%
-  mutate(Class = ifelse(Class == "good", 1, 0))
+#lending_training <- lending_training %>%
+  #mutate(Class = (ifelse(Class == "good", 1, 0)))
   
+```
+
+```{r}
+#lending_training
+```
+
+```{r}
+#is.numeric(lending_training$Class)
 ```
 
 
@@ -130,7 +138,10 @@ rf_explain <-
   explain_tidymodels(
     model = rf_final,
     data = lending_training %>% select(-Class), 
-    y = lending_training %>%  pull(Class),
+    #y = lending_training %>%  pull(Class),
+    y = lending_training %>% 
+      mutate(Class_num = as.integer(Class =="good")) %>% 
+      pull(Class_num),
     label = "rf", 
     type = "classification"
   )
@@ -214,7 +225,7 @@ obs2
 ```
 ```{r}
 #is.integer(lending_training$annual_inc)
-is.integer(lending_training$int_rate)
+#is.integer(lending_training$int_rate)
 
 ```
 
@@ -223,22 +234,20 @@ is.integer(lending_training$int_rate)
 
 
 ```{r}
-cp_profile <- predict_profile(explainer = rf_explain, 
-                          new_observation = obs2,
-                          variables = c("annual_inc", "int_rate"))
+#cp_profile <- predict_profile(explainer = rf_explain, 
+                         # new_observation = obs2,
+                         # variables = c("annual_inc", "int_rate"))
 
 
-cp_profile
+#cp_profile
 ```
 
-You'll also want to use `.data[[]]` rather than `aes()` and quote the variables. Use the `cp_profile()` function to create one CP profile of your choosing. Be sure to choose a variable that is numeric, not integer. There seem to be issues with those that I'm looking into.
-
 ```{r}
-cp_profile %>% 
-  filter(`_vname_` %in% c("annual_inc")) %>% 
-  ggplot(aes(x = annual_inc,
+#cp_profile %>% 
+#  filter(`_vname_` %in% c("annual_inc")) %>% 
+#  ggplot(aes(x = annual_inc,
              y = `_yhat_`)) +
-  geom_line() 
+ # geom_line() 
 ```
 
 **With y_hat being our predicted class outcome (with 1 = good pay back on time and 0 = bad not paid back on time) it appears to show us: as income increases, while it doesn;t appear to be a major difference, it is slightly more likely the person is not on time w repayment.  Yet, it appears it is much more constant w the trend line for higher income whereas lower icnome is much more chaotic in predicted payback.** 
@@ -246,11 +255,11 @@ cp_profile %>%
 
 
 ```{r}
-cp_profile %>% 
-  filter(`_vname_` %in% c("int_rate")) %>% 
-  ggplot(aes(x = int_rate,
-             y = `_yhat_`)) +
-  geom_line() 
+#cp_profile %>% 
+ # filter(`_vname_` %in% c("int_rate")) %>% 
+ # ggplot(aes(x = int_rate,
+ #            y = `_yhat_`)) +
+ # geom_line() 
 ```
 
 **With y_hat being our predicted class outcome (with 1 = good pay back on time and 0 = bad not paid back on time) it appears to show us a very obvious trend.  As expected, as the interest rate increases meaning increasingly more money is owed back than borrowed, the ability to pay on time and the predicted class value races downarward closer to bad meaning the payment will not be on time.** 
@@ -259,23 +268,49 @@ cp_profile %>%
 
 **Write a function to do this!!!!!** 
 
+Write a function called `cp_profile` to make a CP profile. 
+
+The function will take an explainer, 
+a new observation, 
+and a variable name as its arguments and 
+
+create a CP profile for a quantitative predictor variable. 
 
 
-
-----------------------------
-
-
+You will need to use the `predict_profile()` function inside the function you create - 
+put the variable name there so the plotting part is easier.
 
 
+You'll also want to use `.data[[]]` rather than `aes()` and quote the variables. Use the `cp_profile()` function to create one CP profile of your choosing. Be sure to choose a variable that is numeric, not integer. There seem to be issues with those that I'm looking into.
 
 
+```{r}
+ cp_profile <- function(explainer, new_observation, variable) {
+  profile <- predict_profile(explainer, 
+                          new_observation,
+                          variable)
+  
+  graph <- profile %>% 
+    filter(`_vname_` %in% c("variable")) %>% 
+    ggplot(.data[[x = "variable", y = `_yhat_`]]) +
+    geom_line() 
+  
+  profile
+  
+  graph
+ }
+
+#cp_profile %>% 
+ # filter(`_vname_` %in% c("int_rate")) %>% 
+ # ggplot(aes(x = int_rate,
+ #            y = `_yhat_`)) +
+ # geom_line() 
+```
 
 
-
-For an extra challenge, write a function that will work for either a quantitative or categorical variable. 
-
-If you need help with function writing check out the [Functions](https://r4ds.had.co.nz/functions.html) chapter of R4DS by Wickham and Grolemund.
-
+```{r}
+cp_profile(rf_explain, obs2, "int_rate")
+```
 
 
 4. Use `DALEX` functions to create partial dependence plots (with the CP profiles in gray) for the 3-4 most important variables. 
@@ -337,6 +372,21 @@ plot(rf_pdp,
   
   
 6. Describe how you would use the interpretable machine learning tools we've learned (both local and global) in future machine learning projects? How does each of them help you?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 7. (WARNING: I may have to make some changes to how you save this. I will do that by Friday at the latest.) Save this final model using the `saveRDS()` function - see the [Use the model](https://advanced-ds-in-r.netlify.app/posts/2021-03-16-ml-review/#use-the-model) section of the `tidymodels` intro. We are going to use the model in the next part. You'll want to save it in the folder where you create your shiny app.
 
