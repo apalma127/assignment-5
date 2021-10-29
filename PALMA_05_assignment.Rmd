@@ -300,7 +300,7 @@ cp_profile(rf_explain, obs2, "int_rate")
 
 
 
-4. Use `DALEX` functions to create partial dependence plots (with the CP profiles in gray) for the 3-4 most important variables. 
+**4. Use `DALEX` functions to create partial dependence plots (with the CP profiles in gray) for the 3-4 most important variables.** 
 
 
 If the important variables are categorical, you can instead make a CP profile for 3 observations in the dataset and discuss how you could go about constructing a partial dependence plot for a categorical variable (you don't have to code it, but you can if you want an extra challenge).
@@ -328,8 +328,6 @@ is.factor(lending_training$annual_inc)
 
 
 ```{r}
-set.seed(2) 
-
 rf_pdp <- model_profile(explainer = rf_explain, 
                         variables = c("int_rate", "open_il_24m", "annual_inc"))
 
@@ -339,6 +337,18 @@ plot(rf_pdp,
 ```
 
 
+**Discuss how you could go about constructing a partial dependence plot for a categorical variable**
+
+
+-- Subgrade = Categorical 
+
+-- Steps to Create PDP for subgrade
+
+++++ one major step to do and then can use code above: convert from categorical / factor to numeric value !!!
+
+-- for each level of subgrade, working from top to bottom, assign a numeric value using a series of ifelse statements within mutate for subgrade within lending training
+
+-- now, w subgrade being numeric, can feed right into the lost of variables above...
 
 5. Choose 3 observations and do the following for each observation:  
 
