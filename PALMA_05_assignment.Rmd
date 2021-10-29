@@ -462,11 +462,22 @@ plot(lime_rf_2) +
 **How close is each original prediction to the prediction from the local model? Interpret the result. You can also try using fewer or more variables in the local model than I used in the example.**
   
   
+Prediction from Original RF Model: 0.74
+
+Prediction from Local Model:  0.77 (+0.03)
+
+**The predictions are pretty close...the Local Model is +0.03...**
+
+-- They are basically the same because most variables have roughly the same impact ... 
+
+
+Local Model R^2: 0.07 -- Not Good
   
-  
-  
-  
-  
+Bar Plot Shows Variable Importance From Local Model:  
+
+-- The State of NV location has a massive negative effect
+
+-- inq_fi<= 1 has a pretty big positive impact (not close to the size of the NV addr variable though...)
   
   
   
@@ -581,11 +592,23 @@ plot(lime_rf_20) +
 **How close is each original prediction to the prediction from the local model? Interpret the result. You can also try using fewer or more variables in the local model than I used in the example.**
   
   
+Prediction from Original RF Model: 0.83
+
+Prediction from Local Model:  0.77 (-0.06)
+
+**The predictions are fairly close...the Local Model is -0.06...**
+
+-- This likely is because of the massive negative impact of total_bal_il and int_rate which actually had positive impacts above...
+
+Local Model R^2: 0.11 -- Terrible
   
-  
-  
-  
-  
+Bar Plot Shows Variable Importance From Local Model:  
+
+-- inq_fi<= 1 has a massive positive impact
+
+-- inq_last_6mths <=1 has equally massive positive impact
+
+-- total_bal_il > 46626 has massive negative impact
   
 
 
@@ -697,13 +720,20 @@ plot(lime_rf_200) +
   
   **How close is each original prediction to the prediction from the local model? Interpret the result. You can also try using fewer or more variables in the local model than I used in the example.**
   
+
+Prediction from Original RF Model: 0.98
+
+Prediction from Local Model:  0.82 (-0.16)
+
+**The predictions are not close...the Local Model is -0.16...**
+
+-- This likely is because the massive positive impacts seem to be on the lower end of the boxplots for the variables impacts... 
+
+Local Model R^2: 0.09 -- Awful
   
-  
-  
-  
-  
-  
-  
+Bar Plot Shows Variable Importance From Local Model:  
+
+-- int_rate, open_il_24m, and inq_fi all has massively large positive impacts
   
   
 **6. Describe how you would use the interpretable machine learning tools we've learned (both local and global) in future machine learning projects? How does each of them help you?**
