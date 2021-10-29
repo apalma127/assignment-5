@@ -348,7 +348,8 @@ plot(rf_pdp,
 
 -- for each level of subgrade, working from top to bottom, assign a numeric value using a series of ifelse statements within mutate for subgrade within lending training
 
--- now, w subgrade being numeric, can feed right into the lost of variables above...
+-- now, w subgrade being numeric, can feed right into the list of variables above...
+
 
 5. Choose 3 observations and do the following for each observation:  
 
@@ -705,21 +706,26 @@ plot(lime_rf_200) +
   
   
   
-6. Describe how you would use the interpretable machine learning tools we've learned (both local and global) in future machine learning projects? How does each of them help you?
+**6. Describe how you would use the interpretable machine learning tools we've learned (both local and global) in future machine learning projects? How does each of them help you?**
 
 
+I could find great use in using the boxplot and histogram of residuals for a model from global interpretable ML and from local interpretable ML I would definitely have great value from using breakdown profiles and shapley plots. 
 
+**For Global:  Visualizing Residuals** 
 
+This past Summer, I had an internship with a Fintech company called AvidXChange, a Charlotte, NC based Accounts Payable Automation company.  I used sql to pull data from databases and machine learning skills to use neural networks and deep learning.  We wanted to more accurately predicted which of our clients accepted Virtual Credit Card and which didn't as this was a big problem.  Avid makes most of their money from fees on VCC cards being used to pay off invoices as opposed to just direct deposit (this is more ideal for most as they get the money much quicker despite a very small fee).  If able to better identify who simply can't take VCC, it would save a lot of time and money better used on other clients.
 
+When we finalized the mode, I would have loved to see how well it predicted through seeing the distribution of its residuals.  My model also was a class prediction like w the lending data, specifically using the spelling and make up of the company name to predict if they took VCC (the hunch was that companies that appeared to be people did not accept VCC and the model used a series of dictionaries for letters and names from census data to distinguish names).  
 
+If I could analyze the residuals a bit more with things like the boxplot and histogram like we did above, I would have been able to see a bit better how well we predicted correctly.  Specially, I would have been able to see if it was a good model beyond simply looking at output metrics like I did.  If I could have visualized the residuals and seen how it tended to predict the majority class more than most other things, that would have been very easy to see and cool to help show the results as opposed to simply telling people the results with metrics filled with jargon.   
 
+**For Local:  Breakdown Profiles and Shapley**
 
+Also, in my internship I added on to a VCC model a propensity score value which predicted a probability at which a company (we thought) would accept VCC.  It took in many variables including past invoices, size of the invoice, size of the company, if they have taken VCC in the past before, location... 
 
+I would have loved to see for specific companies which variables were more significant in driving the propensity scores to where they went.  Obviously Panera takes VCC because they take credit card but what variable specifically was honing in on this?
 
-
-
-
-
+Seeing the little tug of war between variables and how they effected the outcome woud have been really cool.  Additionally, I would have liked to see the permanence of these variables effects beyond just one observation. If I could have also used a shap plot, I could have seen how firm these variable impacts were as well and seen how it changed from large to small company occurrences.   
 
 
 7. Save this final model using the `write_rds()` function - see the [Use the model](https://advanced-ds-in-r.netlify.app/posts/2021-03-16-ml-review/#use-the-model) section of the `tidymodels` intro for a similar example, but we're using `write_rds()` instead of `saveRDS()`. We are going to use the model in the next part. You'll want to save it in the folder where you create your shiny app. Run the code, and then add `eval=FALSE` to the code chunk options (next to the r inside the curly brackets) so it doesn't rerun this each time you knit. 
