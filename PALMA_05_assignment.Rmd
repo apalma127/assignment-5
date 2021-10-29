@@ -116,22 +116,7 @@ rf_final <- rf_workflow %>%
   fit(data = lending_training)
 ```
 
-1. Use functions from the `DALEX` and `DALEXtra` libraries to create a histogram and boxplot of the residuals from the training data. 
-
-```{r}
-#lending_training <- lending_training %>%
-  #mutate(Class = (ifelse(Class == "good", 1, 0)))
-  
-```
-
-```{r}
-#lending_training
-```
-
-```{r}
-#is.numeric(lending_training$Class)
-```
-
+**1. Use functions from the `DALEX` and `DALEXtra` libraries to create a histogram and boxplot of the residuals from the training data.** 
 
 
 ```{r}
@@ -139,19 +124,17 @@ rf_explain <-
   explain_tidymodels(
     model = rf_final,
     data = lending_training %>% select(-Class), 
-    #y = lending_training %>%  pull(Class),
     y = lending_training %>% 
       mutate(Class_num = as.integer(Class =="good")) %>% 
       pull(Class_num),
-    label = "rf", 
-    type = "classification"
+    label = "rf"
   )
 
 ```
 
 
 ```{r}
-rf_mod_perf <-  model_performance(rf_explain, na.omit())
+rf_mod_perf <-  model_performance(rf_explain)
 
 rf_mod_perf
 ```
@@ -187,10 +170,9 @@ box_plot
 They are not centered around 0 as you would want a good model to do. They appear to skew right heavily well into the positives indicating a continuous underprediction.  This is very significant as it shows a pattern of underpredictions which shouldn't be a constant pattern if it is a good model. 
 
 
-2. Use `DALEX` functions to create a variable importance plot from this model. 
+**2. Use `DALEX` functions to create a variable importance plot from this model.** 
 
 ```{r}
-set.seed(2) 
 rf_var_imp <- 
   model_parts(
     rf_explain
@@ -474,6 +456,9 @@ plot(lime_rf_2) +
   
   
   
+  
+  
+  
 **OBSERVATION 20**
 
 ```{r}
@@ -589,6 +574,8 @@ plot(lime_rf_20) +
   
   
   
+  
+  
 
 
 **OBSERVATION 200**
@@ -667,9 +654,6 @@ num_il_til
 This means that when we changed the order of considering these variables and re-run the breakdown test 20 times, we have the variables having multiple instances of both negative and positive effects.  
 
 This narrative is in direct conflict with the clear cut picture we were painted above.  
-
-
-  
   
   
   
@@ -707,6 +691,10 @@ plot(lime_rf_200) +
   
   
   
+  
+  
+  
+  
 6. Describe how you would use the interpretable machine learning tools we've learned (both local and global) in future machine learning projects? How does each of them help you?
 
 
@@ -730,7 +718,9 @@ plot(lime_rf_200) +
 
 
 
-## Shiny app
+
+
+## Shiny app -- ______
 
 You are going to create an app that allows a user to explore how the predicted probability of a loan being paid back (or maybe just the predicted class - either "good" or "bad") changes depending on the values of the predictor variables.
 
@@ -749,25 +739,28 @@ Specifically, you will do the following:
 
 
 
-## Data Ethics: Data visualization principles -- _____
+My App: 
+
+Repo for App: https://github.com/apalma127/lending-shiny-app
+
+Website Post: https://anthonypalma.netlify.app/posts/shinyapps/ (~~ scroll down to lending data shiny app ~~)
+
+
+
+## Data Ethics: Data visualization principles -- DONE
 
 Were there any principles mentioned that you hadn't heard of before? 
 
-**I was unaware that the y axis on line graphs shouldn't include 0 and that the graoh should be much more honed in on the region of interest than zoomed out.  I actually have never done this to be honest just because I thought it was good etiquette to always start at 0...**
+**I was unaware that the y axis on line graphs shouldn't include 0 and that the graph should be much more honed in on the region of interest than zoomed out.  I actually have never done this to be honest just because I thought it was good etiquette to always start at 0...**
 
 What graph stood out for you as "the worst"? 
 
-**The worst has to be the bubble chart with the professor in front.  While it does have a lot of data and cool things going on, it is a mess.  With no axes and random size differences, there is so much going on the only thing you can see is relative difference.  Additionally, there is a lot of blobbing of points on top of eachother making even relative difference difficult to see.**
+**The worst has to be the bubble chart with the professor in front.  While it does have a lot of data and cool things going on, it is a mess.  With no axes and random size differences, there is so much going on the only thing you can see is relative difference.  Additionally, there is a lot of blobbing of points on top of each other making even relative difference difficult to see.**
 
 Did any of the graphs fool you? 
 
 **The gun deaths in FL graph was veryyyyy confusing because of the upside down filling of it.  At first I was like wow super weird stand your ground DECREASED gun deaths but that was simply because the creator of the graph wanted you to see quite the opposite of reality.**
 
-
 How does practicing good data visualization principles fit in with data ethics?
 
 **The florida gun deaths one was a really good example of how bad data practices, no matter the intent, can actually manipulate the truth and lie to the viewer.  Such fake news would be damaging to a narrative in an election especially because of how contrary to reality it is.  If someone were to do this during election time with important stats about abortion and immigration, it would be crucial to changing minds and votes.**
-
-
-
-
