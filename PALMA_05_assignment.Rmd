@@ -360,7 +360,7 @@ plot(rf_pdp,
 **OBSERVATION 2**
 
 ```{r}
-obs2 <- lending_training %>% 
+obs2 <- lending_test %>% 
   slice(2)
 obs2
 ```
@@ -378,12 +378,21 @@ plot(pp_rf_2)
   
 **Interpret the resulting graph. Which variables contribute most to each observation's prediction?**
 
+First we can see  the initial bars start at the intercept of 0.848 which marks the value of the average predicted class (1 = good, 0 = bad) when applying the rd model to the training data.  
+
+We can see we end up 0.108 lower in our predicted class of paying back a loan than the intercept thanks to some heavy hitting negative variables. The resulting 0.74 is a fairly strong good prediction.  
+
+We can see that the largest and most influential tugs from variables down towardsthe actual predicted value from the intercept comes from:
 
 
+total_bal_il == 55445 --> -0.048 
+
+num_il_tl == 10 --> -0.032
+
+open_il_24m == 2 --> -0.029
 
 
-
-
+This means that for each of these variables, if they were fixed at the values they are set to, the change in average class prediction would be these large negative values.  
   
   
   - Construct a SHAP graph and interpret it. 
@@ -392,21 +401,36 @@ plot(pp_rf_2)
 rf_shap_2 <-predict_parts(explainer = rf_explain,
                         new_observation = obs2,
                         type = "shap",
-                        B = 10 
+                        B = 20 
 )
 
 plot(rf_shap_2)
 ```
 
   
-  
-  
 **Does it tell a similar story to the break-down plot?**
 
+We can see that SEVERAL variables have boxplots of their effects straddling zero spreading across both positive and negative values.  
 
 
+These variables set to their appropriate constants include:
 
-  
+total_bal_il
+
+int_rate
+
+sub_grade
+
+num_il_tl
+
+emp_length
+
+total_il_high_credit_limit
+
+
+This means that when we changed the order of considering these variables and re-run the breakdown test 20 times, we have the variables having multiple instances of both negative and positive effects.  
+
+This narrative is in direct conflict with the clear cut picture we were painted above.   
   
   
   - Construct a LIME graph (follow my code carefully). 
@@ -447,7 +471,7 @@ plot(lime_rf_2) +
 **OBSERVATION 20**
 
 ```{r}
-obs20 <- lending_training %>% 
+obs20 <- lending_test %>% 
   slice(20)
 obs20
 ```
@@ -466,11 +490,24 @@ plot(pp_rf_20)
 **Interpret the resulting graph. Which variables contribute most to each observation's prediction?**
 
 
+First we can see  the initial bars start at the intercept of 0.848 which marks the value of the average predicted class (1 = good, 0 = bad) when applying the rd model to the training data.  
+
+We can see we end up 0.018 lower in our predicted class of paying back a loan than the intercept.  This very little change is due to a lot of the variables' effects have cancelling effects (fairly even split of of + and - effects).  The resulting 0.83 is a strong good prediction.     
+
+We can see that the largest tugs come from variables both + and - (and I guess that makes them most influential as they cancel each other out for the most part)...:
 
 
+int_rate == 12.99 --> -0.04 
+
+total_bal_il == 26275 --> 0.037
+
+inq_fi == 4 --> -0.028
 
 
-  
+This means that for each of these variables, if they were fixed at the values they are set to, the change in average class prediction would be their outputted vals.  
+
+This was a weird one to eval contribution: 1) do the bigger tugs still count because they are cancelling eachother out or 2) do the small negative tugs count more even though they woudn't matter if they big tugs didn't cancel out????
+
   
   - Construct a SHAP graph and interpret it. 
   
@@ -478,7 +515,7 @@ plot(pp_rf_20)
 rf_shap_20 <-predict_parts(explainer = rf_explain,
                         new_observation = obs20,
                         type = "shap",
-                        B = 10 
+                        B = 20 
 )
 
 plot(rf_shap_20)
@@ -488,12 +525,29 @@ plot(rf_shap_20)
   
   **Does it tell a similar story to the break-down plot?**
 
+We can see that SEVERAL variables have boxplots of their effects straddling zero spreading across both positive and negative values.  
 
 
+These variables set to their appropriate constants include:
 
-  
-  
-  
+total_bal_il
+
+sub_grade
+
+annual_inc
+
+int_rate
+
+addr_state
+
+all_util
+
+
+This means that when we changed the order of considering these variables and re-run the breakdown test 20 times, we have almost every single variable having multiple instances of both negative and positive effects.  
+
+This narrative is in direct conflict with the clear cut picture we were painted above.  
+
+
   
   - Construct a LIME graph (follow my code carefully). 
   
@@ -534,7 +588,7 @@ plot(lime_rf_20) +
 **OBSERVATION 200**
 
 ```{r}
-obs200 <- lending_training %>% 
+obs200 <- lending_test %>% 
   slice(200)
 obs200
 ```
@@ -553,8 +607,21 @@ plot(pp_rf_200)
 **Interpret the resulting graph. Which variables contribute most to each observation's prediction?**
 
 
+First we can see  the initial bars start at the intercept of 0.848 which marks the value of the average predicted class (1 = good, 0 = bad) when applying the rd model to the training data.    
+
+We can see we end up 0.132 HIGHER in our predicted class of paying back a loan than the intercept thanks to some big positive jumps from influential variables.  The resulting 0.98 is an extremely strong good prediction.  
+
+We can see that the largest positive jumps from variables come from:
 
 
+int_rate == 13.44 --> 0.029 
+
+sub_grade == 13 --> 0.029
+
+total_bal_il == 0 --> 0.028
+
+
+This means that for each of these variables, if they were fixed at the values they are set to, the change in average class prediction would be these large positive values which pulled our prediction for this observation up very high.  
 
   
   
@@ -564,7 +631,7 @@ plot(pp_rf_200)
 rf_shap_200 <-predict_parts(explainer = rf_explain,
                         new_observation = obs200,
                         type = "shap",
-                        B = 10 
+                        B = 20 
 )
 
 plot(rf_shap_200)
@@ -575,6 +642,25 @@ plot(rf_shap_200)
   **Does it tell a similar story to the break-down plot?**
 
 
+We can see that SEVERAL variables have boxplots of their effects straddling zero spreading across both positive and negative values.  
+
+
+These variables set to their appropriate constants include:
+
+total_bal_il
+
+int_rate
+
+total_il_high_credit_limit
+
+annual_inc
+
+num_il_til
+
+
+This means that when we changed the order of considering these variables and re-run the breakdown test 20 times, we have the variables having multiple instances of both negative and positive effects.  
+
+This narrative is in direct conflict with the clear cut picture we were painted above.  
 
 
   
@@ -633,6 +719,13 @@ plot(lime_rf_200) +
 
 
 7. (WARNING: I may have to make some changes to how you save this. I will do that by Friday at the latest.) Save this final model using the `saveRDS()` function - see the [Use the model](https://advanced-ds-in-r.netlify.app/posts/2021-03-16-ml-review/#use-the-model) section of the `tidymodels` intro. We are going to use the model in the next part. You'll want to save it in the folder where you create your shiny app.
+
+
+
+
+
+
+
 
 ## Shiny app -- ____
 
