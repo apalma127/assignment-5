@@ -271,9 +271,15 @@ put the variable name there so the plotting part is easier.
 
 You'll also want to use `.data[[]]` rather than `aes()` and quote the variables. Use the `cp_profile()` function to create one CP profile of your choosing. Be sure to choose a variable that is numeric, not integer. There seem to be issues with those that I'm looking into.
 
-
 ```{r}
  cp_profile <- function(explainer_fn, new_obs, `var`) {
+   
+  if (is.double(.data[[`var`]]) == TRUE) {
+    return("Variable Is Not Formatted Correctly For Use.")
+    break
+  }
+  
+  
   profile <- predict_profile(explainer = explainer_fn, 
                           new_observation = new_obs,
                           variables = `var`)
@@ -289,6 +295,14 @@ You'll also want to use `.data[[]]` rather than `aes()` and quote the variables.
 
 ```
 
+```{r}
+lending_numeric <- select_if(lending_training, is.numeric)            
+
+lending_integer <- select_if(lending_training, is.integer)
+                             
+lending_integer
+```
+
 
 ```{r}
 cp_profile(rf_explain, obs2, "annual_inc")
@@ -298,6 +312,20 @@ cp_profile(rf_explain, obs2, "annual_inc")
 cp_profile(rf_explain, obs2, "int_rate")
 ```
 
+```{r}
+cp_profile(rf_explain, obs2, "funded_amnt")
+
+```
+
+```{r}
+cp_profile(rf_explain, obs2, "revol_util")
+
+```
+
+```{r}
+cp_profile(rf_explain, obs2, "acc_now_delinq")
+
+```
 
 
 **4. Use `DALEX` functions to create partial dependence plots (with the CP profiles in gray) for the 3-4 most important variables.** 
@@ -351,15 +379,15 @@ plot(rf_pdp,
 -- now, w subgrade being numeric, can feed right into the list of variables above...
 
 
-5. Choose 3 observations and do the following for each observation:  
+**5. Choose 3 observations and do the following for each observation:**  
 
 
 **OBSERVATION 2**
 
 ```{r}
-obs2 <- lending_test %>% 
+obs2_q5 <- lending_test %>% 
   slice(2)
-obs2
+obs2_q5
 ```
 
 
@@ -367,7 +395,7 @@ obs2
   
 ```{r}
 pp_rf_2 <- predict_parts(explainer = rf_explain,
-                          new_observation = obs2,
+                          new_observation = obs2_q5,
                           type = "break_down") 
 
 plot(pp_rf_2)
@@ -375,11 +403,11 @@ plot(pp_rf_2)
   
 **Interpret the resulting graph. Which variables contribute most to each observation's prediction?**
 
-First we can see  the initial bars start at the intercept of 0.848 which marks the value of the average predicted class (1 = good, 0 = bad) when applying the rd model to the training data.  
+First we can seethe initial bars start at the intercept of 0.848 which marks the value of the average predicted class (1 = good, 0 = bad) when applying the rf model to the training data.  
 
 We can see we end up 0.108 lower in our predicted class of paying back a loan than the intercept thanks to some heavy hitting negative variables. The resulting 0.74 is a fairly strong good prediction.  
 
-We can see that the largest and most influential tugs from variables down towardsthe actual predicted value from the intercept comes from:
+We can see that the largest and most influential tugs from variables down towards the actual predicted value from the intercept comes from:
 
 
 total_bal_il == 55445 --> -0.048 
@@ -396,7 +424,7 @@ This means that for each of these variables, if they were fixed at the values th
   
 ```{r}
 rf_shap_2 <-predict_parts(explainer = rf_explain,
-                        new_observation = obs2,
+                        new_observation = obs2_q5,
                         type = "shap",
                         B = 20 
 )
@@ -427,10 +455,8 @@ total_il_high_credit_limit
 
 This means that when we changed the order of considering these variables and re-run the breakdown test 20 times, we have the variables having multiple instances of both negative and positive effects.  
 
-This narrative is in direct conflict with the clear cut picture we were painted above.  
+This narrative is in direct conflict with the clear cut picture we were painted above about variable effects.  
 
-Also, subgrade even sees its effect go from positive contributing above to now being negative; what a drastic change!
-  
   
   - Construct a LIME graph (follow my code carefully). 
   
@@ -439,8 +465,9 @@ Also, subgrade even sees its effect go from positive contributing above to now b
 model_type.dalex_explainer <- DALEXtra::model_type.dalex_explainer
 predict_model.dalex_explainer <- DALEXtra::predict_model.dalex_explainer
 
+set.seed(2)
 lime_rf_2 <- predict_surrogate(explainer = rf_explain,
-                             new_observation = obs2 %>%
+                             new_observation = obs2_q5 %>%
                                select(-Class), 
                              n_features = 5,
                              n_permutations = 1000,
@@ -464,20 +491,20 @@ plot(lime_rf_2) +
   
 Prediction from Original RF Model: 0.74
 
-Prediction from Local Model:  0.77 (+0.03)
+Prediction from Local Model:  0.82 (+0.08)
 
-**The predictions are pretty close...the Local Model is +0.03...**
+**The predictions are pretty close...the Local Model is +0.08...**
 
--- They are basically the same because most variables have roughly the same impact ... 
+-- They are basically the same because most variables have roughly the same impact... probably because the total_il_high_credit_limit variable appears to have slightly greater impact here and some variables impacts may be on the higher end of their boxplots...also just so happens 3 / 5 vars have positive impacts of all same size.... 
 
 
-Local Model R^2: 0.07 -- Not Good
+Local Model R^2: 0.05 -- Not Good
   
 Bar Plot Shows Variable Importance From Local Model:  
 
--- The State of NV location has a massive negative effect
+-- annual income nd total bal il have big negative effects
 
--- inq_fi<= 1 has a pretty big positive impact (not close to the size of the NV addr variable though...)
+-- the rest appear to have equally as high impact vars but positive
   
   
   
@@ -503,9 +530,9 @@ plot(pp_rf_20)
 **Interpret the resulting graph. Which variables contribute most to each observation's prediction?**
 
 
-First we can see  the initial bars start at the intercept of 0.848 which marks the value of the average predicted class (1 = good, 0 = bad) when applying the rd model to the training data.  
+First we can see  the initial bars start at the intercept of 0.848 which marks the value of the average predicted class (1 = good, 0 = bad) when applying the rf model to the training data.  
 
-We can see we end up 0.018 lower in our predicted class of paying back a loan than the intercept.  This very little change is due to a lot of the variables' effects have cancelling effects (fairly even split of of + and - effects).  The resulting 0.83 is a strong good prediction.     
+We can see we end up 0.018 lower in our predicted class of paying back a loan than the intercept.  This very little change is due to the fact that a lot of the variables' effects have cancelling effects (fairly even split of + and - effects).  The resulting 0.83 is a strong good prediction.     
 
 We can see that the largest tugs come from variables both + and - (and I guess that makes them most influential as they cancel each other out for the most part)...:
 
@@ -519,7 +546,7 @@ inq_fi == 4 --> -0.028
 
 This means that for each of these variables, if they were fixed at the values they are set to, the change in average class prediction would be their outputted vals.  
 
-This was a weird one to eval contribution: 1) do the bigger tugs still count because they are cancelling eachother out or 2) do the small negative tugs count more even though they woudn't matter if they big tugs didn't cancel out????
+This was a weird one to eval contribution: 1) do the bigger tugs still count as most significant because they are cancelling eachother out or 2) do the small negative tugs count more even though they wouldn't matter if the big tugs didn't cancel out????
 
   
   - Construct a SHAP graph and interpret it. 
@@ -555,11 +582,12 @@ addr_state
 
 all_util
 
+inq_last_6mths
+
 
 This means that when we changed the order of considering these variables and re-run the breakdown test 20 times, we have almost every single variable having multiple instances of both negative and positive effects.  
 
-This narrative is in direct conflict with the clear cut picture we were painted above.  
-
+This narrative is in direct conflict with the clear cut picture we were painted above as the vars effects are not as clear as we thought above.  
 
   
   - Construct a LIME graph (follow my code carefully). 
@@ -569,6 +597,7 @@ This narrative is in direct conflict with the clear cut picture we were painted 
 model_type.dalex_explainer <- DALEXtra::model_type.dalex_explainer
 predict_model.dalex_explainer <- DALEXtra::predict_model.dalex_explainer
 
+set.seed(2)
 lime_rf_20 <- predict_surrogate(explainer = rf_explain,
                              new_observation = obs20 %>%
                                select(-Class), 
@@ -594,21 +623,21 @@ plot(lime_rf_20) +
   
 Prediction from Original RF Model: 0.83
 
-Prediction from Local Model:  0.77 (-0.06)
+Prediction from Local Model:  0.8 (-0.03)
 
-**The predictions are fairly close...the Local Model is -0.06...**
+**The predictions are fairly close...the Local Model is -0.03...**
 
--- This likely is because of the massive negative impact of total_bal_il and int_rate which actually had positive impacts above...
+-- This likely is because of the massive negative impact of revol_util and annual_inc which pushed the pred slightly below as they countered the pos impact from others.  Annual Income's effects appear to be much more negative here than above...  
 
-Local Model R^2: 0.11 -- Terrible
+Local Model R^2: 0.07 -- Terrible
   
 Bar Plot Shows Variable Importance From Local Model:  
 
--- inq_fi<= 1 has a massive positive impact
+-- revol_util has a massive negative impact
 
--- inq_last_6mths <=1 has equally massive positive impact
+-- annual income has equally massive negative impact
 
--- total_bal_il > 46626 has massive negative impact
+-- inq last 6 mths and total il high credit have moderately large positive impacts
   
 
 
@@ -634,7 +663,7 @@ plot(pp_rf_200)
 **Interpret the resulting graph. Which variables contribute most to each observation's prediction?**
 
 
-First we can see  the initial bars start at the intercept of 0.848 which marks the value of the average predicted class (1 = good, 0 = bad) when applying the rd model to the training data.    
+First we can see  the initial bars start at the intercept of 0.848 which marks the value of the average predicted class (1 = good, 0 = bad) when applying the rf model to the training data.    
 
 We can see we end up 0.132 HIGHER in our predicted class of paying back a loan than the intercept thanks to some big positive jumps from influential variables.  The resulting 0.98 is an extremely strong good prediction.  
 
@@ -647,10 +676,11 @@ sub_grade == 13 --> 0.029
 
 total_bal_il == 0 --> 0.028
 
+and also it helps that all but 3 in this case have positive impacts...
+
 
 This means that for each of these variables, if they were fixed at the values they are set to, the change in average class prediction would be these large positive values which pulled our prediction for this observation up very high.  
 
-  
   
   - Construct a SHAP graph and interpret it. 
   
@@ -666,7 +696,7 @@ plot(rf_shap_200)
   
   
   
-  **Does it tell a similar story to the break-down plot?**
+**Does it tell a similar story to the break-down plot?**
 
 
 We can see that SEVERAL variables have boxplots of their effects straddling zero spreading across both positive and negative values.  
@@ -675,6 +705,8 @@ We can see that SEVERAL variables have boxplots of their effects straddling zero
 These variables set to their appropriate constants include:
 
 total_bal_il
+
+sub_grade
 
 int_rate
 
@@ -685,9 +717,9 @@ annual_inc
 num_il_til
 
 
-This means that when we changed the order of considering these variables and re-run the breakdown test 20 times, we have the variables having multiple instances of both negative and positive effects.  
+This means that when we changed the order of considering these variables and re-run the breakdown test 20 times, we have these variables having multiple instances of both negative and positive effects.  
 
-This narrative is in direct conflict with the clear cut picture we were painted above.  
+This narrative is in direct conflict with the clear cut picture we were painted above as we see the impacts of vars are not as obvious.  
   
   
   
@@ -698,6 +730,7 @@ This narrative is in direct conflict with the clear cut picture we were painted 
 model_type.dalex_explainer <- DALEXtra::model_type.dalex_explainer
 predict_model.dalex_explainer <- DALEXtra::predict_model.dalex_explainer
 
+set.seed(2)
 lime_rf_200 <- predict_surrogate(explainer = rf_explain,
                              new_observation = obs200 %>%
                                select(-Class), 
@@ -723,17 +756,18 @@ plot(lime_rf_200) +
 
 Prediction from Original RF Model: 0.98
 
-Prediction from Local Model:  0.82 (-0.16)
+Prediction from Local Model:  0.81 (-0.17)
 
-**The predictions are not close...the Local Model is -0.16...**
+**The predictions are not close...the Local Model is -0.17...**
 
--- This likely is because the massive positive impacts seem to be on the lower end of the boxplots for the variables impacts... 
+-- This likely is because here we have massive negative impacts seen from revol_util and annual_income, much higher than displayed above, which account for the massive drop in predicted class score.  
 
-Local Model R^2: 0.09 -- Awful
+
+Local Model R^2: 0.06 -- Awful
   
 Bar Plot Shows Variable Importance From Local Model:  
 
--- int_rate, open_il_24m, and inq_fi all has massively large positive impacts
+-- revol_util, annual income have massively large negative impacts that outpace the positive impacts of inq last 6mths, inq_fi, and total_bal_il.  
   
   
 **6. Describe how you would use the interpretable machine learning tools we've learned (both local and global) in future machine learning projects? How does each of them help you?**
