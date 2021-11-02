@@ -272,12 +272,20 @@ put the variable name there so the plotting part is easier.
 You'll also want to use `.data[[]]` rather than `aes()` and quote the variables. Use the `cp_profile()` function to create one CP profile of your choosing. Be sure to choose a variable that is numeric, not integer. There seem to be issues with those that I'm looking into.
 
 ```{r}
+is.double(lending_training$acc_now_delinq)
+```
+
+
+
+```{r}
+is.integer(lending_training$acc_now_delinq)
+
+```
+
+
+
+```{r}
  cp_profile <- function(explainer_fn, new_obs, `var`) {
-   
-  if (is.double(.data[[`var`]]) == TRUE) {
-    return("Variable Is Not Formatted Correctly For Use.")
-    break
-  }
   
   
   profile <- predict_profile(explainer = explainer_fn, 
@@ -295,12 +303,11 @@ You'll also want to use `.data[[]]` rather than `aes()` and quote the variables.
 
 ```
 
+
 ```{r}
 lending_numeric <- select_if(lending_training, is.numeric)            
 
-lending_integer <- select_if(lending_training, is.integer)
-                             
-lending_integer
+lending_numeric
 ```
 
 
@@ -319,11 +326,6 @@ cp_profile(rf_explain, obs2, "funded_amnt")
 
 ```{r}
 cp_profile(rf_explain, obs2, "revol_util")
-
-```
-
-```{r}
-cp_profile(rf_explain, obs2, "acc_now_delinq")
 
 ```
 
@@ -792,10 +794,21 @@ I would have loved to see for specific companies which variables were more signi
 Seeing the little tug of war between variables and how they effected the outcome woud have been really cool.  Additionally, I would have liked to see the permanence of these variables effects beyond just one observation. If I could have also used a shap plot, I could have seen how firm these variable impacts were as well and seen how it changed from large to small company occurrences.   
 
 
-7. Save this final model using the `write_rds()` function - see the [Use the model](https://advanced-ds-in-r.netlify.app/posts/2021-03-16-ml-review/#use-the-model) section of the `tidymodels` intro for a similar example, but we're using `write_rds()` instead of `saveRDS()`. We are going to use the model in the next part. You'll want to save it in the folder where you create your shiny app. Run the code, and then add `eval=FALSE` to the code chunk options (next to the r inside the curly brackets) so it doesn't rerun this each time you knit. 
+**7. Save this final model using the `write_rds()` function - see the section of the `tidymodels` intro for a similar example, but we're using `write_rds()` instead of `saveRDS()`. We are going to use the model in the next part. You'll want to save it in the folder where you create your shiny app. Run the code, and then add `eval=FALSE` to the code chunk options (next to the r inside the curly brackets) so it doesn't rerun this each time you knit.** 
+
+```{r, eval=FALSE}
+# # finalize model
+# rf_final <- rf_workflow %>% 
+#   finalize_workflow(best_accuracy) %>% 
+#   fit(data = lending_training)
 
 
+write_rds(rf_final, "rf_final.rds")
 
+rf_final_read <- readRDS("rf_final.rds")
+
+
+```
 
 
 
