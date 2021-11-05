@@ -9,7 +9,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-#knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ```
 
 ```{r libraries}
@@ -37,7 +37,7 @@ data("lending_club")
 Github Repo Link: https://github.com/apalma127/assignment-5
 
 
-## Interpretable ML methods -- ____
+## Interpretable ML methods -- DONE
 
 We will once again use the lending club data that we used in the 3rd assignment. We will focus on the random forest model, which I recreate below. (Note we use this model even though the true negative rate of the training set is quite bad.)
 
@@ -298,7 +298,6 @@ lending_numeric <- select_if(lending_training, is.numeric)
 
 lending_numeric
 ```
-
 
 ```{r}
 cp_profile(rf_explain, obs2, "annual_inc")
@@ -802,31 +801,13 @@ rf_final_read <- readRDS("rf_final.rds")
 
 
 
-## Shiny app -- ______
+## Shiny app -- DONE
 
-You are going to create an app that allows a user to explore how the predicted probability of a loan being paid back (or maybe just the predicted class - either "good" or "bad") changes depending on the values of the predictor variables.
+My App: https://ajp28117.shinyapps.io/Lending_Club/
 
-Specifically, you will do the following:
-
-* Set up a separate project and GitHub repo for this app. Make sure the saved model from the previous problem is also in that folder. The app needs to be created in a file called *exactly* app.R that is also in the project folder.   
-* At the top of the file, load any libraries you use in the app.  
-* Use the `read_rds()` function to load the model.  
-* You may want to load some of the lending data to use to help in the design of your app. The original data are in `tidymodels` which you will also have to load in the shiny app. 
-* Create a user interface (using the various `*Input()` functions) where someone could enter values for each variable that feeds into the model. You will want to think hard about which types of `*Input()` functions to use. Think about how you can best prevent mistakes (eg. entering free text could lead to many mistakes). I'd recommend using sliders and drop-downs as often as possible.
-* Another part of the user interface will allow them to choose a variable (you can limit this to only the quantitative variables) where they can explore the effects of changing that variable, holding all others constant.  
-* After the user has entered all the required values, the output will be a CP profile with the the predicted value for the data that was entered, indicated by a point. You may be able to use the functions from `DALEX` and `DALEXtra` or you can do some of your own coding. 
-* Use the `bslib` to theme your shiny app!  
-* Publish your app to [shinyapps.io](https://www.shinyapps.io/). There are instructions for doing that on my tutorial page from Intro Data Science: https://animation-and-interactivity-in-r.netlify.app/#publishing-your-app. Make sure to load ALL the libraries that you use at the top of your file. This includes the ranger library, which is used "behind the scenes" when your model is fit. If you try to publish and are unsuccessful, forgetting a library you need is the most common reason I have seen.     
-* Write a paragraph or two describing your app on your website! Link to the app and your GitHub repository in your post. Include a link to your post here. 
-
-
-
-My App: 
-
-Repo for App: https://github.com/apalma127/lending-shiny-app
+Repo for App: https://github.com/apalma127/lending_small
 
 Website Post: https://anthonypalma.netlify.app/posts/shinyapps/ (~~ scroll down to lending data shiny app ~~)
-
 
 
 ## Data Ethics: Data visualization principles -- DONE
